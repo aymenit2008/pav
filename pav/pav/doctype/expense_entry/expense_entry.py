@@ -37,7 +37,7 @@ class ExpenseEntry(AccountsController):
 		#	self.project = frappe.db.get_value("Task", self.task, "project")
 
 	def validate_currency(self):
-		if self.default_currency != self.account_currency:
+		if self.currency != self.account_currency:
 			frappe.throw(_("""Mode Of Payment Wrong Currency"""))
 		for data in self.expenses:
 			if self.default_currency != data.account_currency:
