@@ -30,7 +30,7 @@ pav.pav.ExpenseEntryController = frappe.ui.form.Controller.extend({
 		}*/
 
 		return frappe.call({
-			method: "erpnext.hr.doctype.expense_claim.expense_claim.get_expense_claim_account",
+			method: "pav.pav.doctype.expense_entry.expense_entry.get_expense_entry_account",
 			args: {
 				"expense_claim_type": d.expense_type,
 				"company": doc.company

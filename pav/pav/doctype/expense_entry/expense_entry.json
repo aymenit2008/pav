@@ -223,7 +223,7 @@
   },
   {
    "default": "0",
-   "description": "Amount Currency",
+   "description": "Payment Currency",
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -247,7 +247,7 @@
    "default": "1",
    "fieldname": "conversion_rate",
    "fieldtype": "Float",
-   "label": "Account Exchange Rate",
+   "label": "Exchange Rate",
    "precision": "7",
    "reqd": 1
   },
@@ -282,7 +282,7 @@
  ],
  "icon": "fa fa-money",
  "is_submittable": 1,
- "modified": "2020-07-07 10:26:54.917926",
+ "modified": "2020-07-07 11:03:03.896607",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry",
