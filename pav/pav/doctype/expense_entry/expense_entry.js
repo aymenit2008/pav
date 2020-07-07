@@ -83,6 +83,8 @@ cur_frm.cscript.validate = function(doc) {
 
 cur_frm.cscript.calculate_total = function(doc){
 	doc.total_amount = 0;
+	doc.account_total_amount=0;
+	doc.base_total_amount=0;
 	//doc.total_sanctioned_amount = 0;
 	$.each((doc.expenses || []), function(i, d) {
 		doc.total_amount += d.amount;

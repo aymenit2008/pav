@@ -56,7 +56,9 @@ class ExpenseEntry(AccountsController):
 		#	and flt(flt(self.total_sanctioned_amount) + flt(self.total_taxes_and_charges), precision) ==  flt(paid_amount, precision))) \
 		#	and self.docstatus == 1 and self.approval_status == 'Approved':
 		#		self.status = "Paid"
-		if flt(self.total_amount) > 0 and self.docstatus == 1 and self.approval_status == 'Approved':
+		if flt(self.total_amount) > 0:
+			frappe.throw(_("""Total Amount must to be > 0"""))
+		elif flt(self.total_amount) > 0 and self.docstatus == 1 and self.approval_status == 'Approved':
 			self.status = "Paid"
 		elif self.docstatus == 1 and self.approval_status == 'Rejected':
 			self.status = 'Rejected'
@@ -72,8 +74,8 @@ class ExpenseEntry(AccountsController):
 			self.cost_center = frappe.get_cached_value('Company', self.company, 'cost_center')
 
 	def on_submit(self):
-		if self.amount_total<=0:
-			frappe.throw(_("""Must To Be more than 0"""))
+		if self.total_amount<=0:
+			frappe.throw(_("""Must To Be more than 0 {0}""").format(self.total_amount))
 		if self.approval_status=="Draft":
 			frappe.throw(_("""Approval Status must be 'Approved' or 'Rejected'"""))
 

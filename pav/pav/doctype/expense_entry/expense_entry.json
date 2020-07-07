@@ -250,6 +250,7 @@
    "fieldname": "conversion_rate",
    "fieldtype": "Float",
    "label": "Account Exchange Rate",
+   "precision": "7",
    "reqd": 1
   },
   {
@@ -287,6 +288,7 @@
    "fieldname": "amount_conversion_rate",
    "fieldtype": "Float",
    "label": "Amount Exchange Rate",
+   "precision": "7",
    "reqd": 1
   },
   {
@@ -302,7 +304,7 @@
  ],
  "icon": "fa fa-money",
  "is_submittable": 1,
- "modified": "2020-07-07 07:56:23.318413",
+ "modified": "2020-07-07 08:21:18.086030",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry",
