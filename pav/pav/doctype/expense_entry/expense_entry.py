@@ -56,9 +56,7 @@ class ExpenseEntry(AccountsController):
 		#	and flt(flt(self.total_sanctioned_amount) + flt(self.total_taxes_and_charges), precision) ==  flt(paid_amount, precision))) \
 		#	and self.docstatus == 1 and self.approval_status == 'Approved':
 		#		self.status = "Paid"
-		if flt(self.total_amount) > 0:
-			frappe.throw(_("""Total Amount must to be > 0"""))
-		elif flt(self.total_amount) > 0 and self.docstatus == 1 and self.approval_status == 'Approved':
+		if flt(self.total_amount) > 0 and self.docstatus == 1 and self.approval_status == 'Approved':
 			self.status = "Paid"
 		elif self.docstatus == 1 and self.approval_status == 'Rejected':
 			self.status = 'Rejected'
