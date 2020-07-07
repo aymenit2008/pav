@@ -12,15 +12,12 @@
   "conversion_rate",
   "column_break_5",
   "approval_status",
-  "amount_currency",
-  "amount_conversion_rate",
   "expense_details",
   "expenses",
   "sb1",
   "transactions_section",
   "column_break_17",
   "total_amount",
-  "account_total_amount",
   "base_total_amount",
   "section_break_16",
   "task",
@@ -33,6 +30,7 @@
   "column_break_24",
   "mode_of_payment",
   "payment_account",
+  "account_currency",
   "accounting_dimensions_section",
   "project",
   "dimension_col_break",
@@ -233,7 +231,7 @@
    "no_copy": 1,
    "oldfieldname": "total_claimed_amount",
    "oldfieldtype": "Currency",
-   "options": "amount_currency",
+   "options": "currency",
    "read_only": 1,
    "reqd": 1,
    "width": "160px"
@@ -265,15 +263,6 @@
    "reqd": 1
   },
   {
-   "default": "Company:company:default_currency",
-   "fieldname": "amount_currency",
-   "fieldtype": "Link",
-   "label": "Amount Currency",
-   "options": "Currency",
-   "reqd": 1,
-   "set_only_once": 1
-  },
-  {
    "fetch_from": "company.default_currency",
    "fetch_if_empty": 1,
    "fieldname": "default_currency",
@@ -284,27 +273,16 @@
    "reqd": 1
   },
   {
-   "default": "1",
-   "fieldname": "amount_conversion_rate",
-   "fieldtype": "Float",
-   "label": "Amount Exchange Rate",
-   "precision": "7",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "description": "Account Currency",
-   "fieldname": "account_total_amount",
-   "fieldtype": "Currency",
-   "label": "Total Amount (Account Currency)",
-   "options": "currency",
-   "read_only": 1,
-   "reqd": 1
+   "fetch_from": "payment_account.account_currency",
+   "fieldname": "account_currency",
+   "fieldtype": "Link",
+   "label": "Account Currency",
+   "options": "Currency"
   }
  ],
  "icon": "fa fa-money",
  "is_submittable": 1,
- "modified": "2020-07-07 08:21:18.086030",
+ "modified": "2020-07-07 10:26:54.917926",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry",

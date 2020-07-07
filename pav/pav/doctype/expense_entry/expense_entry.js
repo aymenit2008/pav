@@ -7,10 +7,7 @@ frappe.provide("pav.pav");
 pav.pav.ExpenseEntryController = frappe.ui.form.Controller.extend({
 	amount: function(doc, cdt, cdn) {
 		var child = locals[cdt][cdn];
-		var account_amount = child.amount * doc.amount_conversion_rate
-		var base_amount = account_amount * doc.conversion_rate
-		frappe.model.set_value(cdt, cdn, 'account_amount', account_amount);
-		frappe.model.set_value(cdt, cdn, 'base_amount', base_amount);
+		frappe.model.set_value(cdt, cdn, 'base_amount', child.amount * doc.conversion_rate);
 	},
 
 	expense_type: function(doc, cdt, cdn) {
@@ -68,11 +65,10 @@ cur_frm.cscript.set_help = function(doc) {
 
 cur_frm.cscript.validate = function(doc) {
 	$.each(doc.expenses || [], function(i, d) {
-        	console.log(d.amount)
-		var account_amount = d.amount * doc.amount_conversion_rate
-		var base_amount = account_amount * doc.conversion_rate
-		d.account_amount= account_amount
-		d.base_amount= base_amount
+		if(doc.default_currency!=d.account_currency){
+			frappe.msgprint(__("Not Same Currency"));
+		}
+		d.base_amount= d.amount * doc.conversion_rate
 		if (!d.cost_center){
 			d.cost_center=doc.cost_center
 		}
@@ -83,14 +79,10 @@ cur_frm.cscript.validate = function(doc) {
 
 cur_frm.cscript.calculate_total = function(doc){
 	doc.total_amount = 0;
-	doc.account_total_amount=0;
 	doc.base_total_amount=0;
-	//doc.total_sanctioned_amount = 0;
 	$.each((doc.expenses || []), function(i, d) {
 		doc.total_amount += d.amount;
-		doc.account_total_amount += d.account_amount;
 		doc.base_total_amount += d.base_amount;
-		//doc.total_sanctioned_amount += d.sanctioned_amount;
 	});
 };
 

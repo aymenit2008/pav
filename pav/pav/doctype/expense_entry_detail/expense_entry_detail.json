@@ -11,7 +11,6 @@
   "description",
   "section_break_6",
   "amount",
-  "account_amount",
   "base_amount",
   "column_break_8",
   "accounting_dimensions_section",
@@ -69,7 +68,7 @@
    "label": "Amount",
    "oldfieldname": "claim_amount",
    "oldfieldtype": "Currency",
-   "options": "amount_currency",
+   "options": "currency",
    "print_width": "150px",
    "reqd": 1,
    "width": "150px"
@@ -108,24 +107,13 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount (Company Currency)",
-   "options": "Company:company:default_currency",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "description": "Amount Currency",
-   "fieldname": "account_amount",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Amount (Account Currency)",
-   "options": "currency",
+   "options": "account_currency",
    "read_only": 1,
    "reqd": 1
   }
  ],
  "istable": 1,
- "modified": "2020-07-07 07:58:55.330571",
+ "modified": "2020-07-07 10:11:28.637963",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry Detail",
