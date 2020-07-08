@@ -34,7 +34,8 @@
    "in_list_view": 1,
    "label": "Project Dimension",
    "options": "Project Dimension",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fetch_from": "project_dimension.project",
@@ -51,10 +52,12 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Should to be Number",
    "fieldname": "project_activity_code",
    "fieldtype": "Data",
    "label": "Project Activity Code",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "description",
@@ -95,7 +98,8 @@
    "fieldname": "parent_project_activities",
    "fieldtype": "Link",
    "label": "Parent Project Activities",
-   "options": "Project Activities"
+   "options": "Project Activities",
+   "set_only_once": 1
   },
   {
    "fieldname": "more_information_section_section",
@@ -104,7 +108,7 @@
   }
  ],
  "is_tree": 1,
- "modified": "2020-07-08 03:03:23.886917",
+ "modified": "2020-07-08 03:30:00.920093",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Project Activities",
