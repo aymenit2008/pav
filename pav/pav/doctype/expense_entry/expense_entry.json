@@ -45,7 +45,7 @@
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
-   "options": "EXP-.YYYY.-",
+   "options": "ACC-EXP-.YYYY.-",
    "print_hide": 1,
    "reqd": 1,
    "set_only_once": 1
@@ -286,7 +286,7 @@
  ],
  "icon": "fa fa-money",
  "is_submittable": 1,
- "modified": "2020-08-21 20:40:37.175892",
+ "modified": "2020-08-21 20:51:47.842153",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry",
