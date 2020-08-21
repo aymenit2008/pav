@@ -2,10 +2,12 @@
 
 Partner Added Value
 
-requirments for project activities
-Custom field in Project
-Is Program -> Check -> is_program
-#Custom Script for project
+Requirments for project activities:-
+#1.Custom fields in Project
+1.1.Is Program -> Check -> is_program
+1.2.Project Title -> Data -> project_title (Mandatory,Unique)
+
+#2.Custom Script for project
 this.frm.dashboard.add_transactions([
 	{	    
 		'items': [
@@ -16,7 +18,7 @@ this.frm.dashboard.add_transactions([
 	}	
 ]);
 
-#Server Script for project - before insert
+#3.Server Script for project - before insert
 if doc.is_program==1:
     frappe.get_doc(dict(
             doctype = 'Project Dimension',
@@ -24,6 +26,8 @@ if doc.is_program==1:
             status = doc.status,
             project_code = doc.name
         )).insert()
+
+
 
 #### License
 

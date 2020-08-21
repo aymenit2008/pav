@@ -7,10 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "posting_date",
-  "currency",
+  "mode_of_payment",
+  "payment_account",
+  "payment_currency",
   "conversion_rate",
+  "expense_currency",
   "column_break_5",
+  "posting_date",
   "approval_status",
   "expense_details",
   "expenses",
@@ -28,9 +31,6 @@
   "company",
   "default_currency",
   "column_break_24",
-  "mode_of_payment",
-  "payment_account",
-  "account_currency",
   "accounting_dimensions_section",
   "project",
   "dimension_col_break",
@@ -205,15 +205,7 @@
    "read_only": 1
   },
   {
-   "default": "Company:company:default_currency",
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Account Currency",
-   "options": "Currency",
-   "reqd": 1,
-   "set_only_once": 1
-  },
-  {
+   "depends_on": "mode_of_payment",
    "fieldname": "payment_account",
    "fieldtype": "Link",
    "label": "Payment Account",
@@ -231,7 +223,7 @@
    "no_copy": 1,
    "oldfieldname": "total_claimed_amount",
    "oldfieldtype": "Currency",
-   "options": "currency",
+   "options": "payment_currency",
    "read_only": 1,
    "reqd": 1,
    "width": "160px"
@@ -245,6 +237,7 @@
   },
   {
    "default": "1",
+   "depends_on": "eval:doc.payment_currency!=doc.default_currency",
    "fieldname": "conversion_rate",
    "fieldtype": "Float",
    "label": "Exchange Rate",
@@ -253,6 +246,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.payment_currency!=doc.default_currency",
    "description": "Company Currency",
    "fieldname": "base_total_amount",
    "fieldtype": "Currency",
@@ -267,22 +261,32 @@
    "fetch_if_empty": 1,
    "fieldname": "default_currency",
    "fieldtype": "Link",
-   "label": "Default Currency",
+   "label": "Base Currency",
    "options": "Currency",
    "read_only": 1,
    "reqd": 1
   },
   {
+   "depends_on": "mode_of_payment",
    "fetch_from": "payment_account.account_currency",
-   "fieldname": "account_currency",
+   "fieldname": "payment_currency",
    "fieldtype": "Link",
-   "label": "Account Currency",
-   "options": "Currency"
+   "label": "Payment Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expense_currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Expense Currency",
+   "options": "Currency",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-money",
  "is_submittable": 1,
- "modified": "2020-07-07 11:03:03.896607",
+ "modified": "2020-08-21 20:40:37.175892",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry",
@@ -347,5 +351,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "title",
- "track_changes": 1
+ "track_changes": 1,
+ "track_seen": 1
 }

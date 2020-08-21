@@ -24,22 +24,24 @@ class ExpenseEntry(AccountsController):
 
 	def validate(self):
 		self.validate_currency()
-		#self.calculate_total_amount()
-		#set_employee_name(self)
-		#self.set_expense_account(validate=True)
-		#self.set_payable_account()
 		self.set_cost_center()
-		#self.calculate_taxes()
-		#self.set_status()
-		#if self.task and not self.project:
-		#	self.project = frappe.db.get_value("Task", self.task, "project")
 
 	def validate_currency(self):
-		if self.currency != self.account_currency:
-			frappe.throw(_("""Mode Of Payment Wrong Currency"""))
+		if not self.company or not self.default_currency:
+			frappe.throw(_("""Compnay is Mandatory"""))
 		for data in self.expenses:
-			if self.default_currency != data.account_currency:
-				frappe.throw(_("""Type Wrong Currency{0}{1}""").format(self.default_currency,data.account_currency))
+			if self.account_currency != self.payment_currency:
+				frappe.throw(_("""Currency of {0} must to be Same Currency of Payment""").format(self.expense_type))
+
+	def validate_currency(self):
+		if self.default_currency==self.payment_currency:
+			self.conversion_rate=1.0
+		for data in self.expenses:
+			if not data.cost_center:
+				frappe.throw(_("""Cost Center is Mandatory"""))
+
+
+
 
 	def set_status(self):
 		self.status = {
@@ -96,35 +98,43 @@ class ExpenseEntry(AccountsController):
 		gl_entry = []
 		self.validate_account_details()
 
-		# payment entry
-		if self.total_amount:
-			gl_entry.append(
-				self.get_gl_dict({
-					"account": self.payment_account,
-					"credit": self.base_total_amount,
-					"credit_in_account_currency": self.total_amount,
-					"conversion_rate":self.conversion_rate,
-					"against": ",".join([d.default_account for d in self.expenses]),
-					"against_voucher_type": self.doctype,
-					"against_voucher": self.name,
-					"cost_center": self.cost_center
-				}, item=self)
-			)	
-
 		# expense entries
 		for data in self.expenses:
 			gl_entry.append(
 				self.get_gl_dict({
+					"posting_date": self.posting_date,
 					"account": data.default_account,
+					"account_currency": data.account_currency,
 					"debit": data.base_amount,
-					"debit_in_account_currency": data.base_amount,
-					"conversion_rate":self.conversion_rate,
+					"debit_in_account_currency": data.amount,
+					"conversion_rate":self.conversion_rate if self.payment_currency!=self.default_currency else 1.0,
 					"against": self.payment_account,
 					"against_voucher_type": self.doctype,
 					"against_voucher": self.name,
-					"cost_center": data.cost_center
+					"cost_center": data.cost_center,
+					"project": data.project
 				}, item=data)
 			)
+
+		# payment entry
+		if self.total_amount:
+			gl_entry.append(
+				self.get_gl_dict({
+					"posting_date": self.posting_date,
+					"account": self.payment_account,
+					"account_currency": self.payment_currency,
+					"credit": self.base_total_amount,
+					"credit_in_account_currency": self.total_amount,
+					"conversion_rate":self.conversion_rate if self.payment_currency!=self.default_currency else 1.0,
+					"against": ",".join([d.default_account for d in self.expenses]),
+					"against_voucher_type": self.doctype,
+					"against_voucher": self.name,
+					"cost_center": self.cost_center,
+					"project": self.project
+				}, item=self)
+			)	
+
+
 		
 		return gl_entry
 
@@ -158,7 +168,9 @@ def get_expense_entry_account(expense_claim_type, company):
 			.format(expense_claim_type))
 
 	return {
-		"account": account
+		"account": account,
+		"account_currency": frappe.db.get_value("Account", {"name": account}, "account_currency")
+
 	}
 
 @frappe.whitelist()
@@ -170,6 +182,7 @@ def get_payment_account(mode_of_payment, company):
 			.format(mode_of_payment))
 
 	return {
-		"account": account
+		"account": account,
+		"account_currency": frappe.db.get_value("Account", {"name": account}, "account_currency")
 	}
 

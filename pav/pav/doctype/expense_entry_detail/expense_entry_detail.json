@@ -14,8 +14,9 @@
   "base_amount",
   "column_break_8",
   "accounting_dimensions_section",
-  "cost_center",
-  "dimension_col_break"
+  "project",
+  "dimension_col_break",
+  "cost_center"
  ],
  "fields": [
   {
@@ -67,7 +68,7 @@
    "label": "Amount",
    "oldfieldname": "claim_amount",
    "oldfieldtype": "Currency",
-   "options": "currency",
+   "options": "payment_currency",
    "print_width": "150px",
    "reqd": 1,
    "width": "150px"
@@ -106,13 +107,19 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount (Company Currency)",
-   "options": "account_currency",
+   "options": "default_currency",
    "read_only": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
   }
  ],
  "istable": 1,
- "modified": "2020-07-07 11:03:46.475776",
+ "modified": "2020-08-21 19:35:04.938799",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry Detail",

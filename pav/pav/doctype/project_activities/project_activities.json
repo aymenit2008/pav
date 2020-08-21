@@ -5,13 +5,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "is_group",
   "project_activity",
   "project_dimension",
   "project",
-  "parent_project_activities",
   "column_break_4",
   "project_activity_code",
+  "is_group",
+  "parent_project_activities",
   "more_information_section_section",
   "description",
   "lft",
@@ -32,6 +32,7 @@
    "fieldname": "project_dimension",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Project Dimension",
    "options": "Project Dimension",
    "reqd": 1,
@@ -42,6 +43,7 @@
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Project",
    "options": "Project",
    "read_only": 1,
@@ -98,8 +100,7 @@
    "fieldname": "parent_project_activities",
    "fieldtype": "Link",
    "label": "Parent Project Activities",
-   "options": "Project Activities",
-   "set_only_once": 1
+   "options": "Project Activities"
   },
   {
    "fieldname": "more_information_section_section",
@@ -108,7 +109,7 @@
   }
  ],
  "is_tree": 1,
- "modified": "2020-07-08 03:30:00.920093",
+ "modified": "2020-08-09 16:46:17.375014",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Project Activities",
