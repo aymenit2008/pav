@@ -8,10 +8,11 @@
   "project_activity",
   "project_dimension",
   "project",
+  "parent_project_activities",
   "column_break_4",
   "project_activity_code",
   "is_group",
-  "parent_project_activities",
+  "disabled",
   "more_information_section_section",
   "description",
   "lft",
@@ -106,10 +107,16 @@
    "fieldname": "more_information_section_section",
    "fieldtype": "Section Break",
    "label": "More Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "is_tree": 1,
- "modified": "2020-08-09 16:46:17.375014",
+ "modified": "2020-08-24 11:07:01.606913",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Project Activities",
@@ -135,7 +142,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts Manager",
+   "role": "\u0627\u0644\u0645\u0627\u0644\u064a\u0629",
    "share": 1,
    "write": 1
   },
