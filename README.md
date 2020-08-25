@@ -31,4 +31,7 @@ if doc.is_program==1:
 
 #### License
 
+#.Edit code:erpnext->controllers->accounts_controller.py
+Add:"Expense Entry" in this condition -> if gl_dict.account and self.doctype not in ["Journal Entry","Period Closing Voucher", "Payment Entry", "Expense Entry"]:
+
 MIT
