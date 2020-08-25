@@ -1,10 +1,11 @@
 {
- "autoname": "format:{project}-{project_activity_code}",
+ "autoname": "naming_series:",
  "creation": "2020-07-08 02:20:49.312769",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "project_activity",
   "project_dimension",
   "project",
@@ -43,8 +44,6 @@
    "fetch_from": "project_dimension.project",
    "fieldname": "project",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Project",
    "options": "Project",
    "read_only": 1,
@@ -113,10 +112,16 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": ".project.-.project_activity_code."
   }
  ],
  "is_tree": 1,
- "modified": "2020-08-24 11:07:01.606913",
+ "modified": "2020-08-24 11:20:43.077010",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Project Activities",

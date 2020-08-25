@@ -7,7 +7,25 @@ frappe.provide("pav.pav");
 pav.pav.ExpenseEntryController = frappe.ui.form.Controller.extend({
     amount: function (doc, cdt, cdn) {
         var child = locals[cdt][cdn];
-        frappe.model.set_value(cdt, cdn, 'base_amount', child.amount * doc.conversion_rate);
+	if(!child.default_account || !child.account_currency){
+		frappe.msgprint(__("Please set the Expense Type First"));
+	    	return;
+	}else if(!doc.company || !doc.default_currency){
+		frappe.msgprint(__("Please set the Company First"));
+	    	return;
+	}else{
+		console.log("child.account_currency="+child.account_currency)
+		console.log("doc.payment_currency="+doc.payment_currency)
+		console.log("doc.default_currency="+doc.default_currency)
+	        //frappe.model.set_value(cdt, cdn, 'account_amount', child.amount * (child.account_currency==doc.payment_currency?1:doc.conversion_rate));
+        	//frappe.model.set_value(cdt, cdn, 'base_amount', (child.amount * (child.account_currency==doc.payment_currency?1:doc.conversion_rate)) * (child.account_currency==doc.default_account?1:1/doc.conversion_rate));
+	        frappe.model.set_value(cdt, cdn, 'account_amount', 
+			child.amount * (child.account_currency==doc.payment_currency?1:doc.conversion_rate));
+        	frappe.model.set_value(cdt, cdn, 'base_amount',
+			child.account_currency==doc.default_currency?
+				(child.amount * (child.account_currency==doc.payment_currency?1:doc.conversion_rate)):
+				(child.amount * (child.account_currency==doc.payment_currency?1:doc.conversion_rate))*(doc.conversion_rate))
+	}
     },
 
     expense_type: function (doc, cdt, cdn) {
@@ -21,12 +39,6 @@ pav.pav.ExpenseEntryController = frappe.ui.form.Controller.extend({
         if (!d.expense_type) {
             return;
         }
-        /*if(doc.account_currency != doc.currency) {
-        d.expense_type = "";
-        frappe.msgprint(__("Not Same Currency"));
-        this.frm.refresh_fields();
-        return;
-        }*/
 
         return frappe.call({
             method: "pav.pav.doctype.expense_entry.expense_entry.get_expense_entry_account",
@@ -36,14 +48,19 @@ pav.pav.ExpenseEntryController = frappe.ui.form.Controller.extend({
             },
             callback: function (r) {
                 if (r.message) {
+			console.log("doc.payment_currency="+doc.payment_currency)
+			console.log("doc.default_currency="+doc.default_currency)
+			console.log("r.message.account_currency="+r.message.account_currency)
                     d.default_account = r.message.account;
                     d.account_currency = r.message.account_currency;
-                    if (doc.payment_currency != r.message.account_currency) {
-                        frappe.msgprint(__("Expense Currency Same Payment Currency Must to be same"));
+                    if (doc.payment_currency != r.message.account_currency && doc.default_currency != r.message.account_currency) {
+                        frappe.msgprint(__("Expense Currency must to be equal Payment Currency or Company Currency"));
                     }
                 }
             }
         });
+	cur_frm.refresh_field('expenses');
+
     }
 });
 
@@ -69,14 +86,16 @@ cur_frm.cscript.set_help = function (doc) {
 
 cur_frm.cscript.validate = function (doc) {
     $.each(doc.expenses || [], function (i, d) {
-        if (doc.payment_currency != d.account_currency) {
-		frappe.throw(__("Not Same Currency in Row "+(i+1)));
+        if (doc.payment_currency != d.account_currency && doc.default_currency != d.account_currency) {
+		frappe.throw(__("Expense Currency must to be equal Payment Currency or Company Currency in Row "+(i+1)));
 	}
 
-        /*if (doc.default_currency != d.account_currency) {
-            frappe.throw(__("Not Same Currency"));
-        }*/
-        d.base_amount = d.amount * doc.conversion_rate
+        //d.base_amount = d.amount * doc.conversion_rate
+	d.account_amount=d.amount * (d.account_currency==doc.payment_currency?1:doc.conversion_rate)
+	d.base_amount=d.account_currency==doc.default_currency?
+				(d.amount * (d.account_currency==doc.payment_currency?1:doc.conversion_rate)):
+				(d.amount * (d.account_currency==doc.payment_currency?1:doc.conversion_rate))*(doc.conversion_rate)
+
             if (!d.cost_center) {
 		if (doc.cost_center){
 	                d.cost_center = doc.cost_center
@@ -93,20 +112,18 @@ cur_frm.cscript.validate = function (doc) {
             }
 
     });
-    cur_frm.cscript.calculate_total(doc);
+	cur_frm.refresh_field('expenses');
+	cur_frm.cscript.calculate_total(doc);
 };
 
 cur_frm.cscript.calculate_total = function (doc) {
     doc.total_amount = 0;
     doc.base_total_amount = 0;
+
     $.each((doc.expenses || []), function (i, d) {
         doc.total_amount += d.amount;
         doc.base_total_amount += d.base_amount;
     });
-};
-
-cur_frm.cscript.calculate_total_amount = function (doc, cdt, cdn) {
-    cur_frm.cscript.calculate_total(doc, cdt, cdn);
 };
 
 erpnext.expense_claim = {
@@ -148,12 +165,6 @@ frappe.ui.form.on("Expense Entry", {
                 frappe.set_route("query-report", "General Ledger");
             }, __("View"));
         }
-    },
-
-    calculate_grand_total: function (frm) {
-        var grand_total = flt(frm.doc.total_sanctioned_amount);
-        frm.set_value("grand_total", grand_total);
-        frm.refresh_fields();
     },
 
     set_query_for_cost_center: function (frm) {
@@ -227,6 +238,6 @@ frappe.ui.form.on("Expense Entry", {
             }
         });
         console.log(frm.doc.payment_account)
-    },
+    }
 
 });

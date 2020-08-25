@@ -11,6 +11,7 @@
   "description",
   "section_break_6",
   "amount",
+  "account_amount",
   "base_amount",
   "column_break_8",
   "accounting_dimensions_section",
@@ -61,7 +62,7 @@
   },
   {
    "default": "0",
-   "description": "Amount Currency",
+   "description": "Payment Currency",
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -116,10 +117,19 @@
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project"
+  },
+  {
+   "default": "0",
+   "description": "Account Currency",
+   "fieldname": "account_amount",
+   "fieldtype": "Currency",
+   "label": "Amount (Account Currency)",
+   "options": "account_currency",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2020-08-21 19:35:04.938799",
+ "modified": "2020-08-25 20:00:28.180411",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry Detail",

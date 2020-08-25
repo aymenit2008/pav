@@ -30,8 +30,8 @@ class ExpenseEntry(AccountsController):
 		if not self.company or not self.default_currency:
 			frappe.throw(_("""Compnay is Mandatory"""))
 		for data in self.expenses:
-			if self.account_currency != self.payment_currency:
-				frappe.throw(_("""Currency of {0} must to be Same Currency of Payment""").format(self.expense_type))
+			if self.account_currency != self.payment_currency or self.account_currency != self.default_currency:
+				frappe.throw(_("""Currency of {0} must to be Same Currency of Payment or Company Currency""").format(self.expense_type))
 
 	def validate_currency(self):
 		if self.default_currency==self.payment_currency:
@@ -106,8 +106,8 @@ class ExpenseEntry(AccountsController):
 					"account": data.default_account,
 					"account_currency": data.account_currency,
 					"debit": data.base_amount,
-					"debit_in_account_currency": data.amount,
-					"conversion_rate":self.conversion_rate if self.payment_currency!=self.default_currency else 1.0,
+					"debit_in_account_currency": data.account_amount,
+					"conversion_rate":self.conversion_rate if data.account_currency!=self.default_currency else 1.0,
 					"against": self.payment_account,
 					"against_voucher_type": self.doctype,
 					"against_voucher": self.name,
@@ -143,9 +143,11 @@ class ExpenseEntry(AccountsController):
 			frappe.throw(_("Cost center is required to book an expense claim"))
 
 	def calculate_total_amount(self):
-		self.total_claimed_amount = 0
+		self.total_amount = 0
+		self.base_total_amount = 0
 		for d in self.get('expenses'):
 			self.total_amount += flt(d.amount)
+			self.base_total_amount += flt(d.base_amount)
 
 	def update_task(self):
 		task = frappe.get_doc("Task", self.task)
