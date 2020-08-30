@@ -10,12 +10,16 @@
   "project_dimension",
   "project",
   "parent_project_activities",
+  "project_activity_category",
   "column_break_4",
   "project_activity_code",
   "is_group",
   "disabled",
   "more_information_section_section",
   "description",
+  "section_break_12",
+  "project_activity_payroll",
+  "project_activity_salary_component",
   "lft",
   "rgt",
   "old_parent"
@@ -103,6 +107,7 @@
    "options": "Project Activities"
   },
   {
+   "collapsible": 1,
    "fieldname": "more_information_section_section",
    "fieldtype": "Section Break",
    "label": "More Information"
@@ -118,10 +123,35 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": ".project.-.project_activity_code."
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.project_activity_category=='Payroll'",
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break",
+   "label": "Payroll Details"
+  },
+  {
+   "fieldname": "project_activity_payroll",
+   "fieldtype": "Table",
+   "label": "Project Activity Payroll",
+   "options": "Project Activity Payroll"
+  },
+  {
+   "fieldname": "project_activity_category",
+   "fieldtype": "Select",
+   "label": "Project Activity Category",
+   "options": "\nPayroll"
+  },
+  {
+   "fieldname": "project_activity_salary_component",
+   "fieldtype": "Table",
+   "label": "Project Activity Salary Component",
+   "options": "Project Activity Salary Component"
   }
  ],
  "is_tree": 1,
- "modified": "2020-08-24 11:20:43.077010",
+ "modified": "2020-08-29 20:25:57.941748",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Project Activities",
