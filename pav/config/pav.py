@@ -29,4 +29,44 @@ def get_data():
 				},
 			]
 		},
+		{
+			"label": _("HR"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Employee Checkin Manual",
+					"description":_("Employee Checkin Manual"),
+					"onboard": 1,
+					"dependencies": ["Employee"],
+				},
+			]
+		},
+		{
+			"label": _("Report"),
+			"items": [
+				{
+					"type": "report",
+					"name": "Budget Variance Report for Project Activities",
+					"doctype": "Project Activities",
+					"is_query_report": True
+				},
+				{
+					"type": "report",
+					"name": "Project Activity-wise Salary Register",
+					"doctype": "Salary Slip",
+					"is_query_report": True
+				},
+			]
+		},
+
+		{
+			"label": _("Setup"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Project Activity Settings",
+					"description":_("Project Activity Settings")
+				}
+			]
+		},
 	]

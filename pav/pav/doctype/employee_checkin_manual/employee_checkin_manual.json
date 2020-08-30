@@ -65,7 +65,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "label": "naming_series",
+   "label": "Naming Series",
    "options": "EMP-CKINM-.MM.-.YYYY.-"
   },
   {
@@ -79,7 +79,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-08-30 12:30:54.276992",
+ "modified": "2020-08-30 18:10:34.336099",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Employee Checkin Manual",
