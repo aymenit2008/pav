@@ -8,6 +8,13 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
+					"name": "Advance Request",
+					"description":_("Advance Request"),
+					"onboard": 1,
+					"dependencies": ["Mode of Payment"],
+				},
+				{
+					"type": "doctype",
 					"name": "Expense Entry",
 					"description":_("Expense Entry"),
 					"onboard": 1,
@@ -53,6 +60,12 @@ def get_data():
 				{
 					"type": "report",
 					"name": "Project Activity-wise Salary Register",
+					"doctype": "Salary Slip",
+					"is_query_report": True
+				},
+				{
+					"type": "report",
+					"name": "Project-wise Salary Register",
 					"doctype": "Salary Slip",
 					"is_query_report": True
 				},
