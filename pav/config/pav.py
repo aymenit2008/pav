@@ -53,6 +53,12 @@ def get_data():
 			"items": [
 				{
 					"type": "report",
+					"name": "Trial Balance for Party in Party Currency",
+					"doctype": "GL Entry",
+					"is_query_report": True
+				},
+				{
+					"type": "report",
 					"name": "Budget Variance Report for Project Activities",
 					"doctype": "Project Activities",
 					"is_query_report": True
