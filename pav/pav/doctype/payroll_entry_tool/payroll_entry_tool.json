@@ -9,6 +9,8 @@
   "payroll_entry",
   "start_date",
   "end_date",
+  "is_payable",
+  "payroll_payable_account",
   "payroll_account",
   "payment_account",
   "column_break_9",
@@ -18,7 +20,7 @@
   "project_dimension",
   "project",
   "project_activities",
-  "journal_entry_submitted",
+  "accrual_jv",
   "amended_from"
  ],
  "fields": [
@@ -82,23 +84,16 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "reqd": 1
   },
   {
+   "depends_on": "eval:doc.is_payable==0",
    "description": "Select Paypal Payroll Account to make Accrual JV",
    "fieldname": "payroll_account",
    "fieldtype": "Link",
    "label": "Payroll Account",
    "options": "Account"
-  },
-  {
-   "allow_on_submit": 1,
-   "default": "0",
-   "fieldname": "journal_entry_submitted",
-   "fieldtype": "Check",
-   "label": "Journal Entry Submitted",
-   "no_copy": 1,
-   "read_only": 1
   },
   {
    "fetch_from": "payroll_entry.start_date",
@@ -123,10 +118,31 @@
   {
    "fieldname": "column_break_9",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_payable",
+   "fieldtype": "Check",
+   "label": "Is Payable"
+  },
+  {
+   "depends_on": "eval:doc.is_payable==1",
+   "fieldname": "payroll_payable_account",
+   "fieldtype": "Link",
+   "label": "Payroll Payable Account",
+   "options": "Account"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "accrual_jv",
+   "fieldtype": "Link",
+   "label": "Accrual JV",
+   "options": "Journal Entry",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-05 04:01:22.619030",
+ "modified": "2020-10-09 22:01:56.027970",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Payroll Entry Tool",

@@ -14,9 +14,13 @@ class PayrollEntryTool(Document):
 		self.make_accrual_jv_entry()
 
 	def get_default_payroll_payable_account(self):
-		payroll_payable_account = self.payroll_account
+		payroll_payable_account=None
+		if self.is_payable==1:		
+			payroll_payable_account = self.payroll_payable_account
+		else:
+			payroll_payable_account = self.payroll_account
 		if not payroll_payable_account:
-			frappe.throw(_("Please set Payroll Payable Account in Company Current Document")
+			frappe.throw(_("Please set Payroll - Payable - Account in Current Document")
 				.format(self.company))
 		return payroll_payable_account
 
@@ -63,7 +67,7 @@ class PayrollEntryTool(Document):
 		cond = self.get_filter_condition(employee=employee)
 
 		ss_list = frappe.db.sql("""
-			select t1.name, t1.employee, t1.net_pay from `tabSalary Slip` t1
+			select t1.name, t1.employee, t1.net_pay, t1.designation from `tabSalary Slip` t1
 			where t1.docstatus = %s and t1.start_date >= %s and t1.end_date <= %s
 			and (t1.journal_entry is null or t1.journal_entry = "") %s
 		""" % ('%s', '%s', '%s', cond), (ss_status, self.start_date, self.end_date), as_dict=as_dict)
@@ -73,7 +77,7 @@ class PayrollEntryTool(Document):
 		salary_slips = self.get_sal_slip_list(ss_status = 1, as_dict = True, employee=employee)
 		if salary_slips:
 			salary_components = frappe.db.sql("""select salary_component, amount, parentfield
-				from `tabSalary Detail` where parentfield = '%s' and parent in (%s)""" %
+				from `tabSalary Detail` where do_not_include_in_total=0 and parentfield = '%s' and parent in (%s)""" %
 				(component_type, ', '.join(['%s']*len(salary_slips))), tuple([d.name for d in salary_slips]), as_dict=True)
 			return salary_components
 
@@ -117,7 +121,7 @@ class PayrollEntryTool(Document):
 					INNER JOIN `tabProject Activity Payroll` pap ON pap.parent = pa.name
 					LEFT JOIN `tabProject Activity Salary Component` pasc ON pasc.parent = pa.name
 					where (pasc.salary_component = '%(sc)s' or sc.depends_on_pa_sc = 1)
-					and pap.employee = '%(employee)s' and pap.status= 'Active'""" %
+					and sc.depends_on_payment_days=1 and pap.employee = '%(employee)s' and pap.status= 'Active'""" %
 					{"sc": ac,"employee":employee}, as_dict=True)
 
 				if pa:
@@ -179,27 +183,32 @@ class PayrollEntryTool(Document):
 		pay=0.0
 
 		for ss in ss_list:
+			#cost_center=self.cost_center
+			#if ss[3]:
+				#dcs= frappe.db.get_value("Designation",{"name": designation}, "cost_center")
+				#if dcs:
+					#cost_center=dcs
 			earnings = self.get_salary_component_total(component_type = "earnings",employee=ss[1]) or {}
 			# Earnings
 			for ear in sorted(earnings):
 				accounts.append({
 						"account": earnings[ear].get('account'),
 						"debit_in_account_currency": flt(earnings[ear].get('amount'), precision),
-						"cost_center": earnings[ear].get('cost_center'),
-						"project": earnings[ear].get('project'),
-						"project_dimension": earnings[ear].get('project_dimension'),
-						"project_activities": earnings[ear].get('project_activities')
+						"cost_center": earnings[ear].get('cost_center',self.cost_center),
+						"project": earnings[ear].get('project',self.project),
+						"project_dimension": earnings[ear].get('project_dimension',self.project_dimension),
+						"project_activities": earnings[ear].get('project_activities',self.project_activities)
 					})
 				earn+=flt(earnings[ear].get('amount'), precision)
 			# Loan
 			loan_details = self.get_loan_details(employee=ss[1])
 			for data in loan_details:
 				accounts.append({
-						"account": data.loan_account,
-						"credit_in_account_currency": data.principal_amount,
-						"party_type": "Employee",
-						"party": data.employee
-					})
+					"account": data.loan_account,
+					"credit_in_account_currency": data.principal_amount,
+					"party_type": "Employee",
+					"party": data.employee
+				})
 				loa+=flt(data.principal_amount, precision)
 
 				if data.interest_amount and not data.interest_income_account:
@@ -212,20 +221,20 @@ class PayrollEntryTool(Document):
 						"party_type": "Employee",
 						"party": data.employee
 					})
-			# Payable amount
-			accounts.append({
+			# Payroll Payable amount
+			if self.is_payable==1:
+				accounts.append({
 					"account": default_payroll_payable_account,
 					"credit_in_account_currency": ss[2],
 					"party_type": "Employee",
 					"party": ss[1],
-					"cost_center": earnings[ear].get('cost_center')
+					"cost_center": self.cost_center
 				})
 			pay+=flt(ss[2], precision)
 
 
 		# Deductions
 		if deductions:
-			# Deductions
 			for acc, amount in deductions.items():
 				accounts.append({
 						"account": acc,
@@ -235,6 +244,13 @@ class PayrollEntryTool(Document):
 						"project": self.project
 					})
 				ded+=flt(amount, precision)
+		# Payroll amount
+		if self.is_payable==0:
+			accounts.append({
+				"account": default_payroll_payable_account,
+				"credit_in_account_currency": pay,
+				"cost_center": self.cost_center
+			})
 
 		##frappe.msgprint(_("Totals= earn={0}, ded={1}, loa={2}, pay={3}")
 		##	.format(earn,ded,loa,pay))
@@ -245,16 +261,18 @@ class PayrollEntryTool(Document):
 		journal_entry.set("accounts", accounts)
 		journal_entry.title = default_payroll_payable_account
 		journal_entry.save()
+		self.accrual_jv=journal_entry.name
+		self.save()
 		try:
 			journal_entry.submit()
 			jv_name = journal_entry.name
 			self.update_salary_slip_status(jv_name = jv_name)
+
 		except Exception as e:
 			frappe.msgprint(e)
 
 		frappe.msgprint(_("Journal Entry submitted for Payroll Entry period from {0} to {1}")
 			.format(self.start_date, self.end_date))
-		self.journal_entry_submitted=1
 
 	def update_salary_slip_status(self, jv_name = None):
 		ss_list = self.get_sal_slip_list(ss_status=1)
