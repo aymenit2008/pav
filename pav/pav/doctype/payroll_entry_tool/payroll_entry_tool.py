@@ -24,6 +24,17 @@ class PayrollEntryTool(Document):
 				.format(self.company))
 		return payroll_payable_account
 
+	def get_default_round_off_account(self):
+		round_off_account=None
+		if self.round_off_account:		
+			round_off_account = self.round_off_account
+		else:
+			round_off_account = frappe.get_cached_value('Company',{"company_name": self.company},  "round_off_account")
+
+		if not round_off_account:
+			frappe.throw(_("Please set Round Off Account in Current Document").format(self.company))
+		return round_off_account
+
 	def get_loan_details(self,employee=None):
 		"""
 			Get loan details from submitted salary slip based on selected criteria
@@ -135,6 +146,8 @@ class PayrollEntryTool(Document):
 						account_dict2[num]['project']=item.project
 						account_dict2[num]['project_dimension']=item.project_dimension
 						account_dict2[num]['cost_center']=self.cost_center
+						account_dict2[num]['customer']=frappe.db.get_value("Project",{"name": item.project}, "customer")
+
 						num+=1
 					if percentage_count<100:
 						percentage_count=100-percentage_count
@@ -145,6 +158,7 @@ class PayrollEntryTool(Document):
 						account_dict2[num]['project']=self.project
 						account_dict2[num]['project_dimension']=self.project_dimension
 						account_dict2[num]['cost_center']=self.cost_center
+						account_dict2[num]['customer']=self.customer
 						num+=1
 					elif percentage_count>100:
 						frappe.throw(_("Total Percentage of {0} is {1}")
@@ -158,6 +172,7 @@ class PayrollEntryTool(Document):
 					account_dict2[num]['project']=self.project
 					account_dict2[num]['project_dimension']=self.project_dimension
 					account_dict2[num]['cost_center']=self.cost_center
+					account_dict2[num]['customer']=self.customer
 					num+=1
 			return account_dict2
 		return account_dict
@@ -183,11 +198,6 @@ class PayrollEntryTool(Document):
 		pay=0.0
 
 		for ss in ss_list:
-			#cost_center=self.cost_center
-			#if ss[3]:
-				#dcs= frappe.db.get_value("Designation",{"name": designation}, "cost_center")
-				#if dcs:
-					#cost_center=dcs
 			earnings = self.get_salary_component_total(component_type = "earnings",employee=ss[1]) or {}
 			# Earnings
 			for ear in sorted(earnings):
@@ -197,7 +207,8 @@ class PayrollEntryTool(Document):
 						"cost_center": earnings[ear].get('cost_center',self.cost_center),
 						"project": earnings[ear].get('project',self.project),
 						"project_dimension": earnings[ear].get('project_dimension',self.project_dimension),
-						"project_activities": earnings[ear].get('project_activities',self.project_activities)
+						"project_activities": earnings[ear].get('project_activities',self.project_activities),
+						"customer": earnings[ear].get('customer',self.customer)
 					})
 				earn+=flt(earnings[ear].get('amount'), precision)
 			# Loan
@@ -207,7 +218,13 @@ class PayrollEntryTool(Document):
 					"account": data.loan_account,
 					"credit_in_account_currency": data.principal_amount,
 					"party_type": "Employee",
-					"party": data.employee
+					"party": data.employee,
+					"cost_center": self.cost_center,
+					"project": self.project,
+					"project_dimension": self.project_dimension,
+					"project_activities": self.project_activities,
+					"customer": self.customer
+
 				})
 				loa+=flt(data.principal_amount, precision)
 
@@ -228,7 +245,11 @@ class PayrollEntryTool(Document):
 					"credit_in_account_currency": ss[2],
 					"party_type": "Employee",
 					"party": ss[1],
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"project": self.project,
+					"project_dimension": self.project_dimension,
+					"project_activities": self.project_activities,
+					"customer": self.customer
 				})
 			pay+=flt(ss[2], precision)
 
@@ -240,8 +261,10 @@ class PayrollEntryTool(Document):
 						"account": acc,
 						"credit_in_account_currency": flt(amount, precision),
 						"cost_center": self.cost_center,
-						"party_type": '',
-						"project": self.project
+						"project": self.project,
+						"project_dimension": self.project_dimension,
+						"project_activities": self.project_activities,
+						"customer": self.customer
 					})
 				ded+=flt(amount, precision)
 		# Payroll amount
@@ -249,7 +272,22 @@ class PayrollEntryTool(Document):
 			accounts.append({
 				"account": default_payroll_payable_account,
 				"credit_in_account_currency": pay,
-				"cost_center": self.cost_center
+				"cost_center": self.cost_center,
+				"project": self.project,
+				"project_dimension": self.project_dimension,
+				"project_activities": self.project_activities,
+				"customer": self.customer
+			})
+		# Writeoff
+		if earn!=loa+pay+ded:
+			accounts.append({
+				"account": get_default_round_off_account,
+				"credit_in_account_currency": flt((earn-(loa+pay+ded)), precision),
+				"cost_center": self.cost_center,
+				"project": self.project,
+				"project_dimension": self.project_dimension,
+				"project_activities": self.project_activities,
+				"customer": self.customer
 			})
 
 		##frappe.msgprint(_("Totals= earn={0}, ded={1}, loa={2}, pay={3}")

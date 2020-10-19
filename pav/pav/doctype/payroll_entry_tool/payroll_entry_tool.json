@@ -13,10 +13,12 @@
   "payroll_payable_account",
   "payroll_account",
   "payment_account",
+  "round_off_account",
   "column_break_9",
   "posting_date",
   "company",
   "cost_center",
+  "customer",
   "project_dimension",
   "project",
   "project_activities",
@@ -55,7 +57,7 @@
    "options": "Account"
   },
   {
-   "fetch_from": "project_dimension.project",
+   "fetch_from": "project_activities.project",
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
@@ -69,10 +71,12 @@
    "options": "Project Activities"
   },
   {
+   "fetch_from": "project_activities.project_dimension",
    "fieldname": "project_dimension",
    "fieldtype": "Link",
    "label": "Project Dimension",
-   "options": "Project Dimension"
+   "options": "Project Dimension",
+   "read_only": 1
   },
   {
    "fieldname": "cost_center",
@@ -137,12 +141,27 @@
    "fieldname": "accrual_jv",
    "fieldtype": "Link",
    "label": "Accrual JV",
+   "no_copy": 1,
    "options": "Journal Entry",
    "read_only": 1
+  },
+  {
+   "fetch_from": "project.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Funder",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "round_off_account",
+   "fieldtype": "Link",
+   "label": "Round Off Account",
+   "options": "Account"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-09 22:01:56.027970",
+ "modified": "2020-10-19 13:29:10.538560",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Payroll Entry Tool",
