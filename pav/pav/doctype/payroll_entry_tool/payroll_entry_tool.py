@@ -281,7 +281,7 @@ class PayrollEntryTool(Document):
 		# Writeoff
 		if earn!=loa+pay+ded:
 			accounts.append({
-				"account": get_default_round_off_account,
+				"account": self.get_default_round_off_account(),
 				"credit_in_account_currency": flt((earn-(loa+pay+ded)), precision),
 				"cost_center": self.cost_center,
 				"project": self.project,
