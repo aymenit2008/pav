@@ -35,5 +35,39 @@ frappe.ui.form.on('Payroll Entry Tool', {
 			}
 		}
 
+	},
+	currency: function(frm){
+		var cc=''		
+		console.log(cc)
+		if (frm.doc.currency && frm.doc.company){
+			cc=frappe.db.get_value("Company", {'name':frm.doc.company}, "default_currency")
+		        frappe.db.get_value('Company', {'name':frm.doc.company}, "default_currency").then(({ message }) => {
+		        if (message) {
+			        cc=message.default_currency;
+				frm.set_df_property('conversion_rate',  'hidden',  frm.doc.currency==cc ? 1 : 0);
+				console.log(cc)
+				if(frm.doc.currency && frm.doc.currency!=cc && frm.doc.company){
+					frappe.call({
+						method: "erpnext.setup.utils.get_exchange_rate",
+			                        	args: {
+			                                	from_currency: frm.doc.currency,
+				                                to_currency: cc,
+			        	                        transaction_date: frm.doc.posting_date
+							},
+							callback: function (r, rt) {
+								if (r){
+									frm.set_value("conversion_rate", r.message);
+								}
+								else{
+									frm.set_value("conversion_rate", 1);
+								}                                	
+			                            	}
+						}
+					)	
+				}else{
+					frm.set_value("conversion_rate", 1);
+				}
+		        }})
+	        }
 	}
 });
