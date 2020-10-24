@@ -116,13 +116,13 @@ class PayrollEntryTool(Document):
 					account_dict[s] = {}
 					account_dict[s]['account']=account
 					account_dict[s]['salary_component']=s
-					account_dict[s]['salary_component_desc']=frappe.db.get_value("Salary Component",{"name": s}, "description")
+					account_dict[s]['scd']=frappe.db.get_value("Salary Component",{"name": s}, "description")
 				account_dict[s]['amount'] = flt(account_dict[s].get('amount', 0.0) + a)
 			else:
 				if not account_dict.get(account):
 					account_dict[s] = {}
 					account_dict[s]['account']=account
-					account_dict[s]['salary_component_desc']=frappe.db.get_value("Salary Component",{"name": s}, "description")
+					account_dict[s]['scd']=frappe.db.get_value("Salary Component",{"name": s}, "description")
 				account_dict[s]['amount'] = flt(account_dict[s].get('amount', 0.0) + a)
 
 
@@ -144,7 +144,7 @@ class PayrollEntryTool(Document):
 					for item in pa:
 						percentage_count+=item.project_percentage
 						account_dict2[num]={}
-						account_dict2[num]['scd']=account_dict[ac].get('salary_component_desc')
+						account_dict2[num]['scd']=account_dict[ac].get('scd')
 						account_dict2[num]['account']=account_dict[ac].get('account')
 						account_dict2[num]['amount']=flt(account_dict[ac].get('amount'))*flt(item.project_percentage)/100
 						account_dict2[num]['project_activities']=item.project_activities
@@ -157,7 +157,7 @@ class PayrollEntryTool(Document):
 					if percentage_count<100:
 						percentage_count=100-percentage_count
 						account_dict2[num]={}
-						account_dict2[num]['scd']=account_dict[ac].get('salary_component_desc')
+						account_dict2[num]['scd']=account_dict[ac].get('scd')
 						account_dict2[num]['account']=account_dict[ac].get('account')
 						account_dict2[num]['amount']=account_dict[ac].get('amount')*percentage_count/100
 						account_dict2[num]['project_activities']=self.project_activities
@@ -172,7 +172,7 @@ class PayrollEntryTool(Document):
 
 				else:
 					account_dict2[num]={}
-					account_dict2[num]['scd']=account_dict[ac].get('salary_component_desc')
+					account_dict2[num]['scd']=account_dict[ac].get('scd')
 					account_dict2[num]['account']=account_dict[ac].get('account')
 					account_dict2[num]['amount']=account_dict[ac].get('amount')
 					account_dict2[num]['project_activities']=self.project_activities
@@ -186,15 +186,14 @@ class PayrollEntryTool(Document):
 
 	def make_accrual_jv_entry(self):
 		scc=1 if self.currency==frappe.db.get_value("Company", {'name':self.company}, "default_currency") else 0
-		cr=self.conversion_rate
 		self.check_permission('write')
 		deductions = self.get_salary_component_total(component_type = "deductions") or {}
 		default_payroll_payable_account = self.get_default_payroll_payable_account()
 		jv_name = ""
 		precision = frappe.get_precision("Journal Entry Account", "debit_in_account_currency")
 		##precision = 20
-		frappe.msgprint(_("precision= {0}")
-			.format(precision))
+		##frappe.msgprint(_("precision= {0}")
+		##	.format(precision))
 
 		ss_list = self.get_sal_slip_list(ss_status=1)
 		journal_entry = frappe.new_doc('Journal Entry')
@@ -217,9 +216,9 @@ class PayrollEntryTool(Document):
 			for ear in sorted(earnings):
 				accounts.append({
 						"account": earnings[ear].get('account'),
-						"user_remark": ''+designation if designation else ''+' - '+earnings[ear].get('scd'),
+						"user_remark": _('{0} - {1}').format(designation,earnings[ear].get('scd')),
 						"debit_in_account_currency": flt(earnings[ear].get('amount'), precision),
-						"debit_in_company_currency": flt(earnings[ear].get('amount') if scc else (earnings[ear].get('amount')*self.cr), precision),
+						"debit": flt(((flt(earnings[ear].get('amount'), precision))*(1 if scc else self.conversion_rate)), precision),
 						"conversion_rate": 1 if scc else self.conversion_rate,
 						"cost_center": earnings[ear].get('cost_center',self.cost_center),
 						"project": earnings[ear].get('project',self.project),
@@ -227,14 +226,14 @@ class PayrollEntryTool(Document):
 						"project_activities": earnings[ear].get('project_activities',self.project_activities),
 						"customer": earnings[ear].get('customer',self.customer)
 					})
-				earn+=flt(earnings[ear].get('amount') if scc else (earnings[ear].get('amount')*self.cr), precision)
+				earn+=flt(((flt(earnings[ear].get('amount'), precision))*(1 if scc else self.conversion_rate)), precision)
 			# Loan
 			loan_details = self.get_loan_details(employee=ss[1])
 			for data in loan_details:
 				accounts.append({
 					"account": data.loan_account,
 					"credit_in_account_currency": data.principal_amount,
-					"credit_in_company_currency": flt(data.principal_amount if scc else (data.principal_amount*self.cr),precision),
+					#"credit": flt(data.principal_amount if scc else (data.principal_amount*self.conversion_rate),precision),
 					"conversion_rate": 1 if scc else self.conversion_rate,
 					"party_type": "Employee",
 					"party": data.employee,
@@ -262,7 +261,7 @@ class PayrollEntryTool(Document):
 				accounts.append({
 					"account": default_payroll_payable_account,
 					"credit_in_account_currency": ss[2],
-					"credit_in_company_currency": flt(ss[2] if scc else (ss[2]*self.cr),precision),
+					#"credit": flt(ss[2] if scc else (ss[2]*self.conversion_rate),precision),
 					"conversion_rate": 1 if scc else self.conversion_rate,
 					"party_type": "Employee",
 					"party": ss[1],
@@ -273,7 +272,7 @@ class PayrollEntryTool(Document):
 					"customer": self.customer
 				})
 			pay+=flt(ss[2], precision)
-			paycc+=flt(ss[2] if scc else (ss[2]*self.cr),precision)
+			paycc+=flt(ss[2] if scc else (ss[2]*self.conversion_rate),precision)
 
 
 		# Deductions
@@ -281,9 +280,9 @@ class PayrollEntryTool(Document):
 			for dede in deductions:
 				accounts.append({
 						"account": deductions[dede].get('account'),
-						"user_remark": deductions[dede].get('scd'),
+						"user_remark": _('{0}').format(deductions[dede].get('scd')),
 						"credit_in_account_currency": flt(deductions[dede].get('amount'), precision),
-						"credit_in_company_currency": flt(deductions[dede].get('amount') if scc else (deductions[dede].get('amount')*self.cr),precision),
+						"credit": flt((flt(deductions[dede].get('amount'), precision)*(1 if scc else self.conversion_rate)),precision),
 						"conversion_rate": 1 if scc else self.conversion_rate,
 						"cost_center": self.cost_center,
 						"project": self.project,
@@ -291,15 +290,16 @@ class PayrollEntryTool(Document):
 						"project_activities": self.project_activities,
 						"customer": self.customer
 					})
-				ded+=flt(deductions[dede].get('amount') if scc else (deductions[dede].get('amount')*self.cr),precision)
+				##ded+=flt(deductions[dede].get('amount') if scc else (deductions[dede].get('amount')*self.conversion_rate),precision)
+				ded+=flt((flt(deductions[dede].get('amount'), precision)*(1 if scc else self.conversion_rate)),precision)
 
 
 		# Payroll amount
 		if self.is_payable==0:
 			accounts.append({
 				"account": default_payroll_payable_account,
-				"credit_in_account_currency": flt((earn-ded) if scc else ((earn-ded)*self.cr),precision),
-				"credit_in_company_currency": flt((earn-ded), precision),
+				"credit_in_account_currency": flt(pay,precision),
+				"credit": flt((flt(pay,precision)*(1 if scc else self.conversion_rate)),precision),
 				"conversion_rate": 1 if scc else self.conversion_rate,
 				"cost_center": self.cost_center,
 				"project": self.project,
@@ -307,14 +307,15 @@ class PayrollEntryTool(Document):
 				"project_activities": self.project_activities,
 				"customer": self.customer
 			})
+			paycc=flt((flt(pay,precision)*(1 if scc else self.conversion_rate)),precision)
 		# Writeoff
 		if earn!=(loa+paycc+ded):
-			frappe.msgprint(_("Not Equal = {0}").format(flt((earn-(loa+paycc+ded)), precision)))
+			##frappe.msgprint(_("Not Equal = {0}").format(flt((earn-(loa+paycc+ded)), precision)))
 			accounts.append({
 				"account": self.get_default_round_off_account(),
-				"credit_in_account_currency": (earn-(loa+paycc+ded)),
-				"credit_in_company_currency": (earn-(loa+paycc+ded)),
-				"conversion_rate": 1 if scc else self.conversion_rate,
+				"credit_in_account_currency": flt(self.difference, precision),
+				#"credit": (earn-(loa+paycc+ded)),
+				"conversion_rate": 1,
 				"cost_center": self.cost_center,
 				"project": self.project,
 				"project_dimension": self.project_dimension,
@@ -325,8 +326,8 @@ class PayrollEntryTool(Document):
 		if not accounts:
 			frappe.msgprint(_("There is no Submitted Salary Slip or may be its Acrrualed")
 				.format(earn,ded,loa,pay))
-		frappe.msgprint(_("earn={0},ded={1},loa={2},pay={3},diff={4}")
-			.format(flt(earn, precision),flt(ded, precision),flt(loa, precision),flt(pay, precision),flt((earn-(loa+pay+ded)), precision)))
+		#frappe.msgprint(_("earn={0},ded={1},loa={2},pay={3},diff={4}")
+		#	.format(flt(earn, precision),flt(ded, precision),flt(loa, precision),flt(paycc, precision),flt((earn-(loa+paycc+ded)), precision)))
 
 		journal_entry.set("accounts", accounts)
 		journal_entry.title = default_payroll_payable_account
