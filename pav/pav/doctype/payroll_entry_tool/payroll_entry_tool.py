@@ -261,7 +261,7 @@ class PayrollEntryTool(Document):
 				accounts.append({
 					"account": default_payroll_payable_account,
 					"credit_in_account_currency": ss[2],
-					#"credit": flt(ss[2] if scc else (ss[2]*self.conversion_rate),precision),
+					"credit": flt(ss[2] if scc else (ss[2]*self.conversion_rate),precision),
 					"conversion_rate": 1 if scc else self.conversion_rate,
 					"party_type": "Employee",
 					"party": ss[1],

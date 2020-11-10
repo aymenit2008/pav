@@ -178,11 +178,12 @@
    "fieldname": "difference",
    "fieldtype": "Currency",
    "label": "Difference (Dr - Cr)",
+   "no_copy": 1,
    "options": "Company:company:default_currency"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-24 11:41:42.875289",
+ "modified": "2020-10-24 11:55:13.419990",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Payroll Entry Tool",
