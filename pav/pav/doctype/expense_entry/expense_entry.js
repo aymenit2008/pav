@@ -203,6 +203,11 @@ frappe.ui.form.on("Expense Entry", {
             })
         }
     },
+    type: function (frm) {
+        frm.set_value("party", "");
+        frm.set_value("payment_account", "");
+        frm.set_value("currency", "");
+    },
     party: function (frm) {
         if (!frm.doc.default_currency) {
             frm.set_value("party", "");
