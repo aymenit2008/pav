@@ -180,16 +180,14 @@ frappe.ui.form.on("Expense Entry", {
         };
     },
     payment_account: function (frm) {
-        console.log("payment_account")
-        console.log("payment_account")
-        console.log("payment_account")
-        console.log("payment_account")
+
     },
     currency: function (frm) {
         if (frm.doc.currency == frm.doc.default_currency) {
             frm.set_value("conversion_rate", 1);
             frm.set_df_property('conversion_rate',  'hidden', 1);        
-        } else if (frm.doc.conversion_rate == 1 && frm.doc.currency && frm.doc.default_currency) {
+        } else if (frm.doc.conversion_rate == 1 && frm.doc.currency != frm.doc.default_currency) {
+            frm.set_df_property('conversion_rate',  'hidden', 0);        
             frappe.call({
                 method: "erpnext.setup.utils.get_exchange_rate",
                 args: {
