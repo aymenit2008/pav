@@ -204,7 +204,7 @@ frappe.ui.form.on("Expense Entry", {
     type: function (frm) {
         frm.set_value("party", "");
         frm.set_value("payment_account", "");
-        frm.set_value("currency", "");
+        frm.set_value("currency", "");       
     },
     party: function (frm) {
         if (!frm.doc.default_currency) {
@@ -239,7 +239,7 @@ frappe.ui.form.on("Expense Entry", {
             console.log(frm.doc.payment_account)
         }
         else if (frm.doc.party && frm.doc.type=='Bank Account') {
-            frappe.db.get_value("Bank Account", {"name": frm.doc.bank_account}, "account", function(value) {
+            frappe.db.get_value("Bank Account", {"name": frm.doc.party}, "account", function(value) {
                 if(value.account){
                     frm.set_value("payment_account", value.account);
                     cur_frm.refresh_field('payment_account');
