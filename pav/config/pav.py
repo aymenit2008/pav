@@ -5,7 +5,7 @@ def get_data():
 	return [
 		{
 			"label": _("Accounting"),
-			"items": [
+			"items": [				
 				{
 					"type": "doctype",
 					"name": "Advance Request",
@@ -39,6 +39,13 @@ def get_data():
 		{
 			"label": _("Accounting MC"),
 			"items": [
+				{
+					"type": "doctype",
+					"name": "Payment Request MC",
+					"description":_("Payment Request MC"),
+					"onboard": 1,
+					"dependencies": ["Employee"],
+				},
 				{
 					"type": "doctype",
 					"name": "Advance Request MC",

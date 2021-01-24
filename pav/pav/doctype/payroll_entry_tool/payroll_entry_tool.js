@@ -69,5 +69,13 @@ frappe.ui.form.on('Payroll Entry Tool', {
 				}
 		        }})
 	        }
+	},
+	bank_account: function(frm) {
+		if(frm.doc.bank_account){
+			frappe.db.get_value("Bank Account", {"name": frm.doc.bank_account}, ["account","default_sun_cost_center"], function(value) {
+				frm.set_value("payment_account", value.account);
+				frm.set_value("sun_cost_center", value.default_sun_cost_center);
+			})
+		}
 	}
 });

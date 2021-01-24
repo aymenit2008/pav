@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import flt, money_in_words
 from erpnext.accounts.general_ledger import make_gl_entries
 from erpnext.controllers.accounts_controller import AccountsController
 
@@ -16,6 +17,7 @@ class AdvanceRequestMC(AccountsController):
 	def validate(self):
 		self.validate_amount()
 		self.validate_employee()
+		self.amount_in_words=money_in_words(self.amount, self.currency)
 
 	def on_submit(self):
 		self.validate_accounts()
@@ -23,10 +25,12 @@ class AdvanceRequestMC(AccountsController):
 		self.validate_status()
 		if self.status=='Approved':
 			self.make_gl_entries()
+	
+	def on_update(self):
+		self.amount_in_words=money_in_words(self.amount, self.currency)
 
 	def on_cancel(self):
-		if self.status=='Approved':
-			self.make_gl_entries(cancel=True)
+		self.make_gl_entries(cancel=True)					
 		self.status=='Cancelled'
 
 	def make_gl_entries(self, cancel=False):
@@ -37,32 +41,66 @@ class AdvanceRequestMC(AccountsController):
 
 	def get_gl_entries(self):
 		gl_entry = []
-		gl_entry.append(
-			self.get_gl_dict({
-				"posting_date": self.posting_date,
-				"account": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
-				"account_currency": self.currency,
-				"debit": self.base_amount,
-				"debit_in_account_currency": self.amount,
-				"conversion_rate":self.conversion_rate,
-				"against": self.from_account,
-				"party_type": '' if self.type!='Employee' else 'Employee Account',
-				"party": '' if self.type!='Employee' else frappe.db.get_value("Employee Account",{"employee": self.employee,"currency":self.currency}, "name"),
-				"cost_center": self.cost_center
-			}, item=self)
-		)
-		gl_entry.append(
-			self.get_gl_dict({
-				"posting_date": self.posting_date,
-				"account": self.from_account,
-				"account_currency": self.currency,
-				"credit": self.base_amount,
-				"credit_in_account_currency": self.amount,
-				"conversion_rate":self.conversion_rate,
-				"against": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
-				"cost_center": self.cost_center
-			}, item=self)
-		)
+		if self.is_return:
+			gl_entry.append(
+				self.get_gl_dict({
+					"posting_date": self.posting_date,
+					"account": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
+					"account_currency": self.currency,
+					"credit": self.base_amount,
+					"credit_in_account_currency": self.amount,
+					"conversion_rate":self.conversion_rate,
+					"against": self.from_account,
+					"party_type": '' if self.type!='Employee' else 'Employee Account',
+					"party": '' if self.type!='Employee' else frappe.db.get_value("Employee Account",{"employee": self.employee,"currency":self.currency}, "name"),
+					"against_voucher_type": self.doctype,
+					"against_voucher": self.name,
+					"remarks": self.user_remark,
+					"cost_center": self.cost_center
+				}, item=self)
+			)
+			gl_entry.append(
+				self.get_gl_dict({
+					"posting_date": self.posting_date,
+					"account": self.from_account,
+					"account_currency": self.currency,
+					"debit": self.base_amount,
+					"debit_in_account_currency": self.amount,
+					"conversion_rate":self.conversion_rate,
+					"against": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
+					"remarks": self.user_remark,
+					"cost_center": self.cost_center
+				}, item=self)
+			)
+		else:
+			gl_entry.append(
+				self.get_gl_dict({
+					"posting_date": self.posting_date,
+					"account": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
+					"account_currency": self.currency,
+					"debit": self.base_amount,
+					"debit_in_account_currency": self.amount,
+					"conversion_rate":self.conversion_rate,
+					"against": self.from_account,
+					"party_type": '' if self.type!='Employee' else 'Employee Account',
+					"party": '' if self.type!='Employee' else frappe.db.get_value("Employee Account",{"employee": self.employee,"currency":self.currency}, "name"),
+					"remarks": self.user_remark,
+					"cost_center": self.cost_center
+				}, item=self)
+			)
+			gl_entry.append(
+				self.get_gl_dict({
+					"posting_date": self.posting_date,
+					"account": self.from_account,
+					"account_currency": self.currency,
+					"credit": self.base_amount,
+					"credit_in_account_currency": self.amount,
+					"conversion_rate":self.conversion_rate,
+					"against": self.payment_account if self.type!='Employee' else frappe.db.get_value("Account",{"parent_account": self.payment_account,"account_currency":self.currency}, "name"),
+					"remarks": self.user_remark,
+					"cost_center": self.cost_center
+				}, item=self)
+			)
 		return gl_entry
 
 	def validate_accounts(self):

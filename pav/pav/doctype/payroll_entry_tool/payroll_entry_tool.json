@@ -6,12 +6,15 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "title",
   "payroll_entry",
   "start_date",
   "end_date",
   "is_payable",
   "payroll_payable_account",
   "payroll_account",
+  "direct_to_bank",
+  "bank_account",
   "payment_account",
   "round_off_account",
   "currency",
@@ -20,9 +23,9 @@
   "column_break_9",
   "posting_date",
   "company",
+  "sun_cost_center",
   "cost_center",
   "customer",
-  "project_dimension",
   "project",
   "project_activities",
   "accrual_jv",
@@ -74,14 +77,6 @@
    "options": "Project Activities"
   },
   {
-   "fetch_from": "project_activities.project_dimension",
-   "fieldname": "project_dimension",
-   "fieldtype": "Link",
-   "label": "Project Dimension",
-   "options": "Project Dimension",
-   "read_only": 1
-  },
-  {
    "fieldname": "cost_center",
    "fieldtype": "Link",
    "label": "Cost Center",
@@ -130,7 +125,8 @@
    "default": "0",
    "fieldname": "is_payable",
    "fieldtype": "Check",
-   "label": "Is Payable"
+   "label": "Is Payable",
+   "read_only": 1
   },
   {
    "depends_on": "eval:doc.is_payable==1",
@@ -145,8 +141,7 @@
    "fieldtype": "Link",
    "label": "Accrual JV",
    "no_copy": 1,
-   "options": "Journal Entry",
-   "read_only": 1
+   "options": "Journal Entry"
   },
   {
    "fetch_from": "project.customer",
@@ -179,11 +174,37 @@
    "fieldtype": "Currency",
    "label": "Difference (Dr - Cr)",
    "no_copy": 1,
-   "options": "Company:company:default_currency"
+   "options": "Company:company:default_currency",
+   "precision": "9"
+  },
+  {
+   "fieldname": "sun_cost_center",
+   "fieldtype": "Link",
+   "label": "Sun Cost Center",
+   "options": "Sun Cost Center"
+  },
+  {
+   "default": "0",
+   "fieldname": "direct_to_bank",
+   "fieldtype": "Check",
+   "label": "Direct To Bank"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fetch_from": "payroll_entry.title",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-24 11:55:13.419990",
+ "modified": "2020-11-26 15:56:52.372472",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Payroll Entry Tool",
@@ -204,5 +225,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }
