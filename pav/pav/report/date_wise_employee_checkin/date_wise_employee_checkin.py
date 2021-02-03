@@ -27,8 +27,8 @@ def get_columns():
 		{
 			"fieldname": "emponly",
 			"label": _("Employee "),
-			"fieldtype": "Employee",
-			"options": "Link",
+			"fieldtype": "Link",
+			"options": "Employee",
 			"width": 150
 		},
 		{
