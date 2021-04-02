@@ -76,13 +76,14 @@ def get_dimension_target_details(dimensions,filters):
 				mri.item_code,
 				i.item_name as item_name,
 				sum(mri.stock_qty) as planned_qty,
-				(select sum(sle.actual_qty) 
+				(select IFNULL(sum(sle.actual_qty) ,0)
 					from `tabStock Ledger Entry` sle 
 					INNER JOIN `tabStock Entry` se on se.name=sle.voucher_no						
 					INNER JOIN `tabStock Entry Detail` sei on sei.parent=se.name 						
 					where sle.item_code=mri.item_code
 					and sei.{budget_against}=mri.{budget_against}	
 					and se.purpose='Material Issue'
+					and sle.item_code=mri.item_code
 					group by sle.item_code, sei.{budget_against}
 				) as actual_qty
 			from
