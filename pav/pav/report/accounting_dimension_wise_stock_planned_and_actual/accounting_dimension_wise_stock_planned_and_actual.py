@@ -19,16 +19,7 @@ def execute(filters=None):
 	dimension_target_details = get_dimension_target_details(dimensions,filters)	
 	#frappe.msgprint("{0}".format(dimension_target_details))
 	for ccd in dimension_target_details:
-		if ccd.debit>ccd.credit:
-			debit=ccd.debit-ccd.credit
-			credit=0.0
-		elif ccd.debit<ccd.credit:
-			debit=0.0
-			credit=ccd.credit-ccd.debit
-		else:
-			debit=0.0
-			credit=0.0
-		data.append([ccd.budget_against, ccd.budget_against_name, ccd.debit, ccd.credit, debit, credit])
+		data.append([ccd.budget_against, ccd.budget_against_name, ccd.item_code, ccd.item_name, ccd.planned_qty, ccd.actual_qty])
 
 	
 	return columns, data
@@ -36,12 +27,12 @@ def execute(filters=None):
 def get_columns(filters):
 	columns = [
 		_(filters.get("budget_against")) + ":Link/%s:150" % (filters.get("budget_against")),
-		_(filters.get("budget_against")+" Name") + ":Link/%s:300" % (filters.get("budget_against"))
+		_(filters.get("budget_against")+" Name") + ":Link/%s:300" % (filters.get("budget_against")),
+		_('Item') + ":Link/Item:150",
+		_('Item Name') + ":Data/Item:300"
 	]	
-	columns.append("Debit:Currency:150")
-	columns.append("Credit:Currency:150")
-	columns.append("Balance Debit:Currency:150")
-	columns.append("Balance Credit:Currency:150")
+	columns.append("Planned Qty:Float:150")
+	columns.append("Actual Qty:Float:150")
 	return columns
 
 def get_cost_centers(filters):
@@ -74,25 +65,39 @@ def get_dimension_target_details(dimensions,filters):
 	budget_against = frappe.scrub(filters.get("budget_against"))
 	cond = ""
 	if dimensions:
-		cond += """ and b.{budget_against} in (%s)""".format(
+		cond += """ and mri.{budget_against} in (%s)""".format(
 			budget_against=budget_against) % ", ".join(["%s"] * len(dimensions))
 
 	return frappe.db.sql(
 		"""
 			select
-				b.{budget_against} as budget_against,
+				mri.{budget_against} as budget_against,
 				bal.{budget_against}_name as budget_against_name,
-				sum(b.debit) as debit,
-				sum(b.credit) as credit
+				mri.item_code,
+				i.item_name as item_name,
+				sum(mri.stock_qty) as planned_qty,
+				(select sum(sle.actual_qty) 
+					from `tabStock Ledger Entry` sle 
+					INNER JOIN `tabStock Entry` se on se.name=sle.voucher_no						
+					INNER JOIN `tabStock Entry Detail` sei on sei.parent=se.name 						
+					where sle.item_code=mri.item_code
+					and sei.{budget_against}=mri.{budget_against}	
+					and se.purpose='Material Issue'
+					group by sle.item_code, sei.{budget_against}
+				) as actual_qty
 			from
-				`tabGL Entry` b	 
-				INNER JOIN `tab{budget_against_label}` bal on b.{budget_against}=bal.name
-			where				
-				b.company = %s 
-				and b.posting_date between %s and %s 
+				`tabMaterial Request Item` mri
+				INNER JOIN `tabMaterial Request` mr on mri.parent=mr.name
+				INNER JOIN `tabItem` i on i.name=mri.item_code
+				INNER JOIN `tab{budget_against_label}` bal on mri.{budget_against}=bal.name
+			where
+				mr.material_request_type='Material Issue'
+				and mr.docstatus=1
+				and mr.company = %s 
+				and mr.transaction_date between %s and %s 
 				{cond}
 			group by
-				b.{budget_against}
+				mri.item_code, mri.{budget_against}
 		""".format(
 			budget_against_label=filters.budget_against,
 			budget_against=budget_against,
