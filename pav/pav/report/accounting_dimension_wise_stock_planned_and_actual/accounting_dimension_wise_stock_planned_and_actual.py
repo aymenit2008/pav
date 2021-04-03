@@ -76,15 +76,13 @@ def get_dimension_target_details(dimensions,filters):
 				mri.item_code,
 				i.item_name as item_name,
 				sum(mri.stock_qty) as planned_qty,
-				(select IFNULL(sum(sle.actual_qty) ,0)
-					from `tabStock Ledger Entry` sle 
-					INNER JOIN `tabStock Entry` se on se.name=sle.voucher_no						
-					INNER JOIN `tabStock Entry Detail` sei on sei.parent=se.name 						
-					where sle.item_code=mri.item_code
-					and sei.{budget_against}=mri.{budget_against}	
+				(select IFNULL(sum(sei.transfer_qty) ,0)
+					from `tabStock Entry Detail` sei 
+					INNER JOIN `tabStock Entry` se on sei.parent=se.name					
+					where sei.item_code=mri.item_code
+					and sei.{budget_against}=mri.{budget_against}
 					and se.purpose='Material Issue'
-					and sle.item_code=mri.item_code
-					group by sle.item_code, sei.{budget_against}
+					and se.docstatus=1
 				) as actual_qty
 			from
 				`tabMaterial Request Item` mri
@@ -92,7 +90,8 @@ def get_dimension_target_details(dimensions,filters):
 				INNER JOIN `tabItem` i on i.name=mri.item_code
 				INNER JOIN `tab{budget_against_label}` bal on mri.{budget_against}=bal.name
 			where
-				mr.material_request_type='Material Issue'
+				i.is_stock_item=1
+				and mr.material_request_type='Material Issue'
 				and mr.docstatus=1
 				and mr.company = %s 
 				and mr.transaction_date between %s and %s 
