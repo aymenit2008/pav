@@ -10,7 +10,10 @@
   "mode_of_payment",
   "bank_account",
   "employee",
+  "supplier",
   "employee_name",
+  "supplier_name",
+  "is_return",
   "currency",
   "conversion_rate",
   "column_break_9",
@@ -33,7 +36,12 @@
   "payment_account",
   "payment_account_balance",
   "from_account",
-  "amended_from"
+  "amended_from",
+  "workflow_track_section_section",
+  "workflow_track",
+  "reference_section_section",
+  "reference_type",
+  "reference_name"
  ],
  "fields": [
   {
@@ -74,8 +82,7 @@
    "depends_on": "eval:(doc.type=='Employee')",
    "fieldname": "employee",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
+   "ignore_user_permissions": 1,
    "label": "Employee",
    "options": "Employee"
   },
@@ -116,7 +123,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Type",
-   "options": "Mode of Payment\nBank Account\nEmployee"
+   "options": "Mode of Payment\nBank Account\nEmployee\nSupplier"
   },
   {
    "fieldname": "naming_series",
@@ -136,17 +143,18 @@
   {
    "fieldname": "purpose",
    "fieldtype": "Small Text",
-   "label": "Purpose"
+   "label": "Purpose",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_13",
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:(doc.type=='Employee')",
    "fetch_from": "employee.employee_name",
    "fieldname": "employee_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Employee Name",
    "read_only": 1
@@ -227,10 +235,67 @@
    "label": "Payment Account Balance",
    "options": "Payment Account",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "employee",
+   "fieldname": "is_return",
+   "fieldtype": "Check",
+   "label": "Is Return"
+  },
+  {
+   "depends_on": "eval:(doc.type=='Supplier')",
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "depends_on": "eval:(doc.type=='Supplier')",
+   "fetch_from": "supplier.supplier_name_en",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "workflow_track_section_section",
+   "fieldtype": "Section Break",
+   "label": "WorkFlow Track Section"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "workflow_track",
+   "fieldtype": "Table",
+   "label": "WorkFlow Track",
+   "no_copy": 1,
+   "options": "WorkFlow Track"
+  },
+  {
+   "fieldname": "reference_section_section",
+   "fieldtype": "Section Break",
+   "label": "Reference Section"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_type",
+   "fieldtype": "Select",
+   "label": "Reference Type",
+   "no_copy": 1,
+   "options": "\nJournal Entry\nPayment Entry",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference Name",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-11-09 16:34:33.990144",
+ "modified": "2021-04-03 04:35:21.444000",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Advance Request MC",
@@ -263,6 +328,7 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "timeline_field": "employee",
  "title_field": "purpose",
  "track_changes": 1
 }
