@@ -17,7 +17,9 @@ def execute(filters=None):
 			"empname": d[1],
 			"dateonly": d[2],
 			"mintime": d[3],
-			"maxtime": d[4]
+			"maxtime": d[4],
+			"delaytime": d[5],
+			"workinghours": d[6]
 		})
 	formatted_data.extend([{}])
 	return columns, formatted_data
@@ -54,6 +56,18 @@ def get_columns():
 			"label": _("Last"),
 			"fieldtype": "Data",
 			"width": 70
+		},
+                {
+			"fieldname": "delaytime",
+			"label": _("Delay"),
+			"fieldtype": "Data",
+			"width": 70
+		},
+                {
+			"fieldname": "workinghours",
+			"label": _("Working hours"),
+			"fieldtype": "Data",
+			"width": 120
 		}
 		]
 
@@ -73,7 +87,11 @@ def get_data(filters):
 		(select TIME(MIN(l.time)) FROM `tabEmployee Checkin` l where l.employee=em.employee and 
 			DATE(l.time)<= DATE(em.time) and DATE(l.time)>= DATE(em.time) limit 1) as mintime,
 		(select TIME(MAX(l.time)) FROM `tabEmployee Checkin` l where l.employee=em.employee and 
-			DATE(l.time)<= DATE(em.time) and DATE(l.time)>= DATE(em.time) limit 1) as maxtime
+			DATE(l.time)<= DATE(em.time) and DATE(l.time)>= DATE(em.time) limit 1) as maxtime,
+		(select TIMEDIFF(time,shift_start) FROM `tabEmployee Checkin` l where l.employee=em.employee and 
+			DATE(l.time)<= DATE(em.time) and DATE(l.time)>= DATE(em.time) limit 1) as delaytime,
+		(select TIMEDIFF(maxtime,mintime) FROM `tabEmployee Checkin` l where l.employee=em.employee and 
+			DATE(l.time)<= DATE(em.time) and DATE(l.time)>= DATE(em.time) limit 1) as workinghour
 		FROM `tabEmployee Checkin` em
 		{conditions} GROUP BY dateonly, employee
 		""".format(
