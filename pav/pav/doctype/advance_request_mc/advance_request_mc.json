@@ -275,11 +275,12 @@
    "fieldname": "jv_created",
    "fieldtype": "Check",
    "label": "JV Created",
+   "no_copy": 1,
    "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2021-04-06 22:07:29.378739",
+ "modified": "2021-04-06 22:33:39.707197",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Advance Request MC",
@@ -309,7 +310,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "employee",

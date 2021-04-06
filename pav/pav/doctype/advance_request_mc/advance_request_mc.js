@@ -26,6 +26,15 @@ frappe.ui.form.on('Advance Request MC', {
 					});
 				}, __("Create"));
 			}
+			if (frm.doc.jv_created==1){
+				frm.add_custom_button(__('Journal Entry'), function () {					
+					frappe.route_options = {
+						reference_type: frm.doc.doctype,
+						reference_name: frm.doc.name
+					};
+					frappe.set_route("List", "Journal Entry");
+				}, __("View"));
+			}		
 			frm.add_custom_button(__('Accounting Ledger'), function () {
 				frappe.route_options = {
 					voucher_no: frm.doc.name,
@@ -36,16 +45,7 @@ frappe.ui.form.on('Advance Request MC', {
 					presentation_currency: frm.doc.currency
 				};
 				frappe.set_route("query-report", "General Ledger");
-			}, __("View"));
-			if (frm.doc.jv_created==1){
-				frm.add_custom_button(__('Journal Entry'), function () {					
-					frappe.route_options = {
-						reference_type: frm.doc.doctype,
-						reference_name: frm.doc.name
-					};
-					frappe.set_route("List", "Journal Entry");
-				}, __("View"));
-			}			
+			}, __("View"));					
 		}
 	},
 	validate: function (frm) {

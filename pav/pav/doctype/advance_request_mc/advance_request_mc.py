@@ -199,8 +199,7 @@ class AdvanceRequestMC(AccountsController):
 			journal_entry.save()
 		except Exception as e:
 			frappe.msgprint(e)
-		
-		self.reference_name=journal_entry.name
+				
 		self.jv_created=1
 		self.save()
 		frappe.msgprint(_("Journal Entry Created for Currenct Document {0} ")
