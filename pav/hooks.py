@@ -91,18 +91,10 @@ app_license = "MIT"
 # ---------------
 
 scheduler_events = {
- 	"all": [
- 		"pav.pav.utils.leave_auto_approve"
- 	],
     "daily": [
 		"pav.pav.utils.leave_auto_approve"
     ],
-	"hourly": [
-		"pav.pav.utils.leave_auto_approve"
-	],
-	"hourly_long": [
-		"pav.pav.utils.leave_auto_approve"
-	]
+
 # 	"hourly": [
 # 		"pav.tasks.hourly"
 # 	],

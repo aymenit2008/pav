@@ -123,6 +123,7 @@ frappe.ui.form.on('Expense Entry MC', {
 		}
 		$.each((frm.doc.expenses || []), function (i, d) {
 			d.currency = frm.doc.currency
+			d.base_amount=d.amount*frm.doc.conversion_rate			
 			if (d.project_activities) {
 				frappe.call({
 					method: 'frappe.client.get_value',

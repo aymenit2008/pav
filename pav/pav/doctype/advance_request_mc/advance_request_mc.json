@@ -261,6 +261,7 @@
    "label": "WorkFlow Track Section"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "workflow_track",
    "fieldtype": "Table",
    "label": "WorkFlow Track",
@@ -269,7 +270,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-01-10 11:47:53.869337",
+ "modified": "2021-01-25 13:45:03.740149",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Advance Request MC",

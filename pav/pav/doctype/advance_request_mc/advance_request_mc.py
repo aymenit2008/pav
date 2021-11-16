@@ -73,6 +73,20 @@ class AdvanceRequestMC(AccountsController):
 				}, item=self)
 			)
 		else:
+			party_type=''
+			party=''			
+			if self.type=='Employee':
+				party_type=='Employee Account'
+				party=frappe.db.get_value("Employee Account",{"employee": self.employee,"currency":self.currency}, "name")
+			elif self.type=='Supplier':
+				frappe.msgprint("test")
+				party_type==self.type
+				##frappe.msgprint("{0}".format(self.type))
+				##frappe.msgprint("party_type={0}".format(party_type))
+				party=self.supplier
+			##frappe.msgprint("{0}-{1}".format(party_type,party))
+			##frappe.msgprint("{0}-{1}".format(self.type,self.supplier))
+			##frappe.msgprint("{0}".format(self))
 			gl_entry.append(
 				self.get_gl_dict({
 					"posting_date": self.posting_date,
@@ -82,8 +96,8 @@ class AdvanceRequestMC(AccountsController):
 					"debit_in_account_currency": self.amount,
 					"conversion_rate":self.conversion_rate,
 					"against": self.from_account,
-					"party_type": '' if self.type!='Employee' else 'Employee Account',
-					"party": '' if self.type!='Employee' else frappe.db.get_value("Employee Account",{"employee": self.employee,"currency":self.currency}, "name"),
+					"party_type": 'Supplier' if self.type=='Supplier' else ('Employee Account' if self.type=='Employee' else ''),
+					"party": party ,
 					"remarks": self.user_remark,
 					"cost_center": self.cost_center
 				}, item=self)
