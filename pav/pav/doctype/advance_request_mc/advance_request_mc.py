@@ -30,6 +30,7 @@ class AdvanceRequestMC(AccountsController):
 		self.amount_in_words=money_in_words(self.amount, self.currency)
 
 	def on_cancel(self):
+		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry')
 		self.make_gl_entries(cancel=True)					
 		self.status=='Cancelled'
 

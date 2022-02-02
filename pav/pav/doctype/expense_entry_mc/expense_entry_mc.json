@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "naming_series:",
  "creation": "2020-11-09 13:56:40.638403",
  "doctype": "DocType",
@@ -109,7 +110,8 @@
    "fieldname": "conversion_rate",
    "fieldtype": "Float",
    "hidden": 1,
-   "label": "Conversion Rate"
+   "label": "Conversion Rate",
+   "precision": "9"
   },
   {
    "fieldname": "column_break_9",
@@ -336,7 +338,8 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-01-10 11:25:35.975076",
+ "links": [],
+ "modified": "2022-01-16 21:19:02.328006",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "Expense Entry MC",
