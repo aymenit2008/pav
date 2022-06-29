@@ -149,8 +149,8 @@
   }
  ],
  "is_tree": 1,
- "modified": "2020-11-26 09:32:42.146477",
- "modified_by": "a.kuhlani@partner-cons.com",
+ "modified": "2022-05-31 10:13:20.775218",
+ "modified_by": "aymen.alsurabi@yamaan.org",
  "module": "PAV",
  "name": "Project Activities",
  "nsm_parent_field": "parent_project_activities",
@@ -201,6 +201,7 @@
  ],
  "quick_entry": 1,
  "search_fields": "project_activity,project,project_activity_code",
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "project_activity",
