@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "PAV",
  "links": [],
- "modified": "2022-06-27 00:44:30.439260",
+ "modified": "2022-12-29 23:17:10.192615",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "PAV",
@@ -32,6 +32,12 @@
    "doc_view": "List",
    "label": "Expense Entry MC",
    "link_to": "Expense Entry MC",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Bank Slip YA",
+   "link_to": "Bank Slip YA",
    "type": "DocType"
   }
  ]
