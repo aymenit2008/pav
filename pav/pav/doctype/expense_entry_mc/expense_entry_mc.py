@@ -31,7 +31,7 @@ class ExpenseEntryMC(AccountsController):
 			frappe.throw(_("""Currency is Mandatory"""))
 
 	def on_cancel(self):
-		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry')
+		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry","Payment Ledger Entry")
 		self.make_gl_entries(cancel=True)
 		self.status=='Cancelled'
 

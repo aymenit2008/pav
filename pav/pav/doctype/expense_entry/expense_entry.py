@@ -90,6 +90,8 @@ class ExpenseEntry(AccountsController):
 			frappe.get_doc("Project", self.project).update_project()
 
 	def make_gl_entries(self, cancel=False):
+		if cancel:
+			
 		if flt(self.total_amount) > 0:
 			gl_entries = self.get_gl_entries()
 			make_gl_entries(gl_entries, cancel)

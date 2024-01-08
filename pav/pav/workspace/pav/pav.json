@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">PAV</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Entry MC\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Advance Request MC\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Slip YA\",\"col\":3}}]",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">PAV</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Entry MC\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Advance Request MC\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Slip YA\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Entry Dashboard\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Advance Request Dashboard\",\"col\":4}}]",
  "creation": "2023-01-13 19:57:52.527012",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -11,7 +11,7 @@
  "is_hidden": 0,
  "label": "PAV",
  "links": [],
- "modified": "2023-01-13 20:01:53.061233",
+ "modified": "2023-10-04 11:47:36.307321",
  "modified_by": "Administrator",
  "module": "PAV",
  "name": "PAV",
@@ -25,6 +25,20 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Expense Entry Dashboard",
+   "link_to": "Expense Entry MC",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Expense Entry MC",
    "link_to": "Expense Entry MC",
    "type": "DocType"
@@ -35,6 +49,13 @@
    "label": "Advance Request MC",
    "link_to": "Advance Request MC",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Advance Request Dashboard",
+   "link_to": "Advance Request MC",
+   "type": "Dashboard"
   },
   {
    "color": "Grey",
