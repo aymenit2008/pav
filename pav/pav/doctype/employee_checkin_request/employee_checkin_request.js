@@ -8,7 +8,7 @@ frappe.ui.form.on('Employee Checkin Request', {
 	setup: function(frm) {
 		frm.set_query("checkin_approver", function() {
 			return {
-				query: "erpnext.hr.doctype.department_approver.department_approver.get_approvers",
+				query: "hrms.hr.doctype.department_approver.department_approver.get_approvers",
 				filters: {
 					employee: frm.doc.employee,
 					doctype: 'Leave Application'
@@ -22,7 +22,7 @@ frappe.ui.form.on('Employee Checkin Request', {
 		if(frm.doc.employee) {
 			// server call is done to include holidays in leave days calculations
 			return frappe.call({
-				method: 'erpnext.hr.doctype.leave_application.leave_application.get_leave_approver',
+				method: 'hrms.hr.doctype.leave_application.leave_application.get_leave_approver',
 				args: {
 					"employee": frm.doc.employee,
 				},

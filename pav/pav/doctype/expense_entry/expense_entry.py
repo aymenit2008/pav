@@ -6,7 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import get_fullname, flt, cstr
 from frappe.model.document import Document
-from erpnext.hr.utils import set_employee_name
+from hrms.hr.utils import set_employee_name
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.general_ledger import make_gl_entries
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account

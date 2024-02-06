@@ -71,7 +71,7 @@ frappe.ui.form.on('Advance Request', {
 
 	make_expense_claim: function(frm) {
 		return frappe.call({
-			method: "erpnext.hr.doctype.expense_claim.expense_claim.get_expense_claim",
+			method: "hrms.hr.doctype.expense_claim.expense_claim.get_expense_claim",
 			args: {
 				"employee_name": frm.doc.employee,
 				"company": frm.doc.company,
@@ -89,7 +89,7 @@ frappe.ui.form.on('Advance Request', {
 
 	make_return_entry: function(frm) {
 		frappe.call({
-			method: 'erpnext.hr.doctype.employee_advance.employee_advance.make_return_entry',
+			method: 'hrms.hr.doctype.employee_advance.employee_advance.make_return_entry',
 			args: {
 				'employee': frm.doc.employee,
 				'company': frm.doc.company,
@@ -141,7 +141,7 @@ frappe.ui.form.on('Advance Request', {
 	employee: function (frm) {
 		if (frm.doc.employee) {
 			return frappe.call({
-				method: "erpnext.hr.doctype.employee_advance.employee_advance.get_due_advance_amount",
+				method: "hrms.hr.doctype.employee_advance.employee_advance.get_due_advance_amount",
 				args: {
 					"employee": frm.doc.employee,
 					"posting_date": frm.doc.posting_date
