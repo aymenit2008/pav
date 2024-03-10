@@ -1,0 +1,48 @@
+{
+ "cards": [
+  {
+   "card": "Expense Entry MC(ALL)"
+  },
+  {
+   "card": "Expense Entry MC(Draft)"
+  },
+  {
+   "card": "Expense Entry MC(Submitted No Auditor)"
+  },
+  {
+   "card": "Expense Entry MC(Submitted Has Auditor)"
+  },
+  {
+   "card": "Expense Entry MC(Approved by PM)"
+  },
+  {
+   "card": "Expense Entry MC(Approved by ED)"
+  },
+  {
+   "card": "Expense Entry MC(Approved by HM)"
+  },
+  {
+   "card": "Expense Entry MC(Checked by Accountant)"
+  },
+  {
+   "card": "Expense Entry MC(Approved by Finance Manager)"
+  }
+ ],
+ "charts": [
+  {
+   "width": "Half"
+  }
+ ],
+ "creation": "2023-08-09 11:21:05.855418",
+ "dashboard_name": "Expense Entry MC",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2024-03-10 10:35:30.044440",
+ "modified_by": "Administrator",
+ "module": "PAV",
+ "name": "Expense Entry MC",
+ "owner": "Administrator"
+}

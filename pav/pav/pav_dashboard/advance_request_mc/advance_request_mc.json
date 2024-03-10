@@ -1,0 +1,39 @@
+{
+ "cards": [
+  {
+   "card": "Advance Request MC(ALL)"
+  },
+  {
+   "card": "Advance Request MC(Approved by Manager)"
+  },
+  {
+   "card": "Advance Request MC(Approved by PM)"
+  },
+  {
+   "card": "Advance Request MC(Approved by ED)"
+  },
+  {
+   "card": "Advance Request MC(Checked by Accountant)"
+  },
+  {
+   "card": "Advance Request MC(Approved by Finance Manager)"
+  }
+ ],
+ "charts": [
+  {
+   "width": "Half"
+  }
+ ],
+ "creation": "2023-08-09 13:15:37.147173",
+ "dashboard_name": "Advance Request MC",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2024-03-10 10:48:25.370127",
+ "modified_by": "Administrator",
+ "module": "PAV",
+ "name": "Advance Request MC",
+ "owner": "Administrator"
+}
